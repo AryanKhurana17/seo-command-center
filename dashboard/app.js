@@ -78,8 +78,6 @@ function renderIssueTable() {
         const tr = document.createElement('tr');
         tr.className = 'fade-in-row';
 
-        const badgeClass = `badge- ${issue.severity.toLowerCase().trim()}`;
-        // Note: the HTML uses badge-high, badge-medium, badge-low
         const sevClass = `badge badge-${issue.severity.toLowerCase()}`;
 
         tr.innerHTML = `

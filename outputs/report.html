@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SEO Audit Report — nmgtechnologies.com</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #1a1a1f;
+            --card: #242428;
+            --border: #3a3a42;
+            --text: #f8f7f4;
+            --muted: #c8c5be;
+            --accent: #FF0000;
+            --yellow: #e2b53e;
+            --green: #22c55e;
+        }
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+        .wrap { max-width: 900px; margin: 0 auto; padding: 48px 32px; }
+
+        /* Header */
+        .report-header {
+            margin-bottom: 40px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--border);
+        }
+        .report-header h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin: 0 0 8px;
+            letter-spacing: -0.02em;
+        }
+        .report-header .sub {
+            color: var(--muted);
+            font-size: 16px;
+            margin: 0;
+        }
+        .report-header .date {
+            color: var(--muted);
+            font-size: 13px;
+            margin-top: 8px;
+        }
+
+        /* KPI Cards */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+        .kpi {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+        .kpi-value {
+            font-size: 36px;
+            font-weight: 700;
+            display: block;
+            margin-bottom: 4px;
+        }
+        .kpi-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--muted);
+            font-weight: 600;
+        }
+        .kpi.high .kpi-value { color: var(--accent); }
+        .kpi.medium .kpi-value { color: var(--yellow); }
+
+        /* Cards */
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+        .card h3 {
+            font-size: 18px;
+            margin: 0 0 16px;
+            font-weight: 600;
+        }
+
+        /* Tables */
+        .table-wrap { overflow-x: auto; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+        th {
+            font-size: 11px;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--muted);
+            font-weight: 600;
+            text-align: left;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            background: rgba(0,0,0,0.15);
+        }
+        td {
+            text-align: left;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            vertical-align: top;
+        }
+        tr:last-child td { border-bottom: none; }
+        .count { text-align: center; font-weight: 600; }
+        .issue-type { font-weight: 500; }
+
+        /* Badges */
+        .badge {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 999px;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+        .badge-high { background: var(--accent); color: #fff; }
+        .badge-medium { background: var(--yellow); color: var(--bg); }
+        .badge-low { background: var(--border); color: var(--muted); }
+
+        /* URL details */
+        .url-row td {
+            padding: 0 16px 12px;
+            border-bottom: 1px solid var(--border);
+        }
+        .url-toggle {
+            cursor: pointer;
+            color: var(--muted);
+            font-size: 12px;
+            font-weight: 500;
+            padding: 4px 0;
+        }
+        .url-toggle:hover { color: var(--accent); }
+        .url-list {
+            margin-top: 8px;
+            padding: 12px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 8px;
+        }
+        .url-item {
+            font-size: 12px;
+            color: var(--muted);
+            padding: 3px 0;
+            word-break: break-all;
+        }
+        .url-more {
+            font-size: 11px;
+            color: var(--accent);
+            margin-top: 4px;
+            font-weight: 500;
+        }
+        .old-val { color: var(--accent); text-decoration: line-through; opacity: 0.7; }
+        .new-val { color: var(--green); font-weight: 500; }
+
+        /* Recommendations */
+        .rec-item {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+            color: var(--muted);
+            font-size: 14px;
+        }
+        .rec-item:last-child { border-bottom: none; }
+        .rec-num {
+            background: var(--accent);
+            color: #fff;
+            font-size: 11px;
+            font-weight: 700;
+            min-width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+            color: var(--muted);
+            font-size: 12px;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .muted { color: var(--muted); font-size: 13px; }
+
+        /* Print styles */
+        @media print {
+            body { background: #fff; color: #1a1a1f; padding: 20px; }
+            .card { border-color: #ddd; background: #f9f9f9; }
+            .kpi { background: #f9f9f9; border-color: #ddd; }
+            .badge-high { background: #dc2626; }
+            .url-list { background: #f0f0f0; }
+        }
+        @media (max-width: 640px) {
+            .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+            .wrap { padding: 24px 16px; }
+        }
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <div class="report-header">
+        <h1>SEO Audit Report</h1>
+        <p class="sub">nmgtechnologies.com &middot; 456 URLs crawled</p>
+        <div class="date">Generated 2026-06-06 16:58 &middot; Model: qwen3.5:9b &middot; 0 model calls &middot; 0.0s runtime</div>
+    </div>
+
+    <div class="kpi-grid">
+        <div class="kpi">
+            <span class="kpi-value">13</span>
+            <span class="kpi-label">Total Issues</span>
+        </div>
+        <div class="kpi high">
+            <span class="kpi-value">2</span>
+            <span class="kpi-label">High</span>
+        </div>
+        <div class="kpi medium">
+            <span class="kpi-value">6</span>
+            <span class="kpi-label">Medium</span>
+        </div>
+        <div class="kpi">
+            <span class="kpi-value">5</span>
+            <span class="kpi-label">Low</span>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3>Issues (Prioritized by Severity)</h3>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr><th style="width:100px">Severity</th><th>Issue</th><th style="width:80px;text-align:center">Count</th><th>Description</th></tr>
+                </thead>
+                <tbody>
+                    
+            <tr>
+                <td><span class="badge badge-high">High</span></td>
+                <td class="issue-type">Duplicate Title</td>
+                <td class="count">12</td>
+                <td>Pages sharing an identical title.</td>
+            </tr>
+            <tr class="url-row">
+                <td colspan="4">
+                    <details>
+                        <summary class="url-toggle">View affected URLs (12)</summary>
+                        <div class="url-list"><div class="url-item">https://nmgtechnologies.com/</div><div class="url-item">https://nmgtechnologies.com/clients/case-studies/</div><div class="url-item">https://nmgtechnologies.com/industry/fintech</div><div class="url-item">https://nmgtechnologies.com/industry/healthcare</div><div class="url-item">https://nmgtechnologies.com/industry/marketresearch</div><div class="url-more">+ 7 more</div></div>
+                    </details>
+                </td>
+            </tr>
+            <tr>
+                <td><span class="badge badge-high">High</span></td>
+                <td class="issue-type">Broken Link</td>
+                <td class="count">6</td>
+                <td>URLs returning a client error (4xx).</td>
+            </tr>
+            <tr class="url-row">
+                <td colspan="4">
+                    <details>
+                        <summary class="url-toggle">View affected URLs (6)</summary>
+                        <div class="url-list"><div class="url-item">https://nmgtechnologies.com/hs-fs/hubfs/B-W_icon.png.png?width=101&height=100&name=B-W_icon.png.png</div><div class="url-item">https://nmgtechnologies.com/hs-fs/hubfs/edtech.png.png?width=101&height=100&name=edtech.png.png</div><div class="url-item">https://nmgtechnologies.com/hs-fs/hubfs/fintech.png.png?width=101&height=100&name=fintech.png.png</div><div class="url-item">https://nmgtechnologies.com/hs-fs/hubfs/fintechgrey.png?width=122&height=80&name=fintechgrey.png</div><div class="url-item">https://nmgtechnologies.com/hs-fs/hubfs/glob.png.png?width=101&height=100&name=glob.png.png</div><div class="url-more">+ 1 more</div></div>
+                    </details>
+                </td>
+            </tr>
+            <tr>
+                <td><span class="badge badge-medium">Medium</span></td>
+                <td class="issue-type">Title Too Long</td>
+                <td class="count">63</td>
+                <td>Titles likely truncated in search results.</td>
+            </tr>
+            <tr class="url-row">
+                <td colspan="4">
+                    <details>
+                        <summary class="url-toggle">View affected URLs (63)</summary>
+                        <div class="url-list"><div class="url-item">https://nmgtechnologies.com/</div><div class="url-item">https://nmgtechnologies.com/agentic-ai</div><div class="url-item">https://nmgtechnologies.com/ai-driven-enterprise-software-development</div><div class="url-item">https://nmgtechnologies.com/ai-enhanced-web-mobile-application-development</div><div class="url-item">https://nmgtechnologies.com/ai-optimized-ecommerce-solutions</div><div class="url-more">+ 58 more</div></div>
+                    </details>
+                </td>
+            </tr>
+            <tr>
+                <td><span class="badge badge-medium">Medium</span></td>
+                <td class="issue-type">Duplicate Meta Description</td>
+                <td class="count">16</td>
+                <td>Pages sharing an identical meta description.</td>
+            </tr>
+            <tr class="url-row">
+                <td colspan="4">
+                    <details>
+                        <summary class="url-toggle">View affected URLs (16)</summary>
+                        <div class="url-list"><div class="url-item">https://nmgtechnologies.com/blog</div><div class="url-item">https://nmgtechnologies.com/blog/author/nishtha</div><div class="url-item">https://nmgtechnologies.com/clients/case-studies/</div><div class="url-item">https://nmgtechnologies.com/industry/healthcare</div><div class="url-item">https://nmgtechnologies.com/industry/marketresearch</div><div class="url-more">+ 11 more</div></div>
+                    </details>
+                </td>
+            </tr>
+            <tr>
+                <td><span class="badge badge-medium">Medium</span></td>
+                <td class="issue-type">Missing H1</td>
+                <td class="count">2</td>
+                <td>Pages with no H1 header.</td>
+            </tr>
+            <tr class="url-row">
+                <td colspan="4">
+                    <details>
+                        <summary class="url-toggle">View affected URLs (2)</summary>
+                        <div class="url-list"><div class="url-item">https://nmgtechnologies.com/company/process/</div><div class="url-item">https://nmgtechnologies.com/contact-us</div></div>
+                    </details>
+                </td>
+            </tr>
+            <tr>
+                <td><span class="badge badge-medium">Medium</span></td>
+                <td class="issue-type">Redirect</td>
+                <td class="count">7</td>
+                <td>URLs that redirect (3xx).</td>
+            </tr>
+            <tr class="url-row">
+                <td colspan="4">
+                    <details>
+                        <summary class="url-toggle">View affected URLs (7)</summary>
+                        <div class="url-list"><div class="url-item">https://nmgtechnologies.com/company/about-us/</div><div class="url-item">https://nmgtechnologies.com/compound-banc</div><div class="url-item">https://nmgtechnologies.com/services/mobile-application-development/</div><div class="url-item">https://nmgtechnologies.com/services/mobile-application-development/android-app-development/</div><div class="url-item">https://nmgtechnologies.com/services/user-interface-design/mobile-versions/</div><div class="url-more">+ 2 more</div></div>
+                    </details>
+                </td>
+            </tr>
+            <tr>
+                <td><span class="badge badge-medium">Medium</span></td>
+                <td class="issue-type">Non Indexable But Linked</td>
+                <td class="count">2</td>
+                <td>Non-indexable pages that still receive internal links.</td>
+            </tr>
+            <tr class="url-row">
+                <td colspan="4">
+                    <details>
+                        <summary class="url-toggle">View affected URLs (2)</summary>
+                        <div class="url-list"><div class="url-item">https://nmgtechnologies.com/industry/edtech</div><div class="url-item">https://nmgtechnologies.com/solution/internet-of-things/</div></div>
+                    </details>
+                </td>
+            </tr>
+            <tr>
+                <td><span class="badge badge-medium">Medium</span></td>
+                <td class="issue-type">Missing Image Alt</td>
+                <td class="count">279</td>
+                <td>Images with no alt text for accessibility and SEO.</td>
+            </tr>
+            <tr class="url-row">
+                <td colspan="4">
+                    <details>
+                        <summary class="url-toggle">View affected URLs (279)</summary>
+                        <div class="url-list"><div class="url-item">https://nmgtechnologies.com/hs-fs/hubfs/Dedicated%20Team%20Setup.png?width=1400&height=1400&name=Dedicated%20Team%20Setup.png</div><div class="url-item">https://nmgtechnologies.com/hs-fs/hubfs/Imported_Blog_Media/1-1-1-1.jpg?width=640&height=272&name=1-1-1-1.jpg</div><div class="url-item">https://nmgtechnologies.com/hs-fs/hubfs/Imported_Blog_Media/2-1-1-1.jpg?width=640&height=566&name=2-1-1-1.jpg</div><div class="url-item">https://nmgtechnologies.com/hs-fs/hubfs/Imported_Blog_Media/3-1-3.jpg?width=640&height=357&name=3-1-3.jpg</div><div class="url-item">https://nmgtechnologies.com/hs-fs/hubfs/Imported_Blog_Media/4-1-3.jpg?width=640&height=450&name=4-1-3.jpg</div><div class="url-more">+ 274 more</div></div>
+                    </details>
+                </td>
+            </tr>
+            <tr>
+                <td><span class="badge badge-low">Low</span></td>
+                <td class="issue-type">Title Too Short</td>
+                <td class="count">21</td>
+                <td>Titles that are too short to be descriptive.</td>
+            </tr>
+            <tr class="url-row">
+                <td colspan="4">
+                    <details>
+                        <summary class="url-toggle">View affected URLs (21)</summary>
+                        <div class="url-list"><div class="url-item">https://nmgtechnologies.com/blog</div><div class="url-item">https://nmgtechnologies.com/blog/author/nishtha</div><div class="url-item">https://nmgtechnologies.com/blog/tag/design</div><div class="url-item">https://nmgtechnologies.com/blog/tag/events</div><div class="url-item">https://nmgtechnologies.com/blog/tag/events/page/2</div><div class="url-more">+ 16 more</div></div>
+                    </details>
+                </td>
+            </tr>
+            <tr>
+                <td><span class="badge badge-low">Low</span></td>
+                <td class="issue-type">Meta Description Too Long</td>
+                <td class="count">42</td>
+                <td>Meta descriptions longer than 155 characters, likely truncated in search.</td>
+            </tr>
+            <tr class="url-row">
+                <td colspan="4">
+                    <details>
+                        <summary class="url-toggle">View affected URLs (42)</summary>
+                        <div class="url-list"><div class="url-item">https://nmgtechnologies.com/</div><div class="url-item">https://nmgtechnologies.com/agentic-ai</div><div class="url-item">https://nmgtechnologies.com/ai-driven-business-transformation-consulting</div><div class="url-item">https://nmgtechnologies.com/ai-driven-devops-cloud-automation</div><div class="url-item">https://nmgtechnologies.com/ai-driven-enterprise-software-development</div><div class="url-more">+ 37 more</div></div>
+                    </details>
+                </td>
+            </tr>
+            <tr>
+                <td><span class="badge badge-low">Low</span></td>
+                <td class="issue-type">Duplicate H1</td>
+                <td class="count">19</td>
+                <td>Pages sharing an identical H1 header.</td>
+            </tr>
+            <tr class="url-row">
+                <td colspan="4">
+                    <details>
+                        <summary class="url-toggle">View affected URLs (19)</summary>
+                        <div class="url-list"><div class="url-item">https://nmgtechnologies.com/blog</div><div class="url-item">https://nmgtechnologies.com/blog/author/nishtha</div><div class="url-item">https://nmgtechnologies.com/blog/tag/design</div><div class="url-item">https://nmgtechnologies.com/blog/tag/events</div><div class="url-item">https://nmgtechnologies.com/blog/tag/events/page/2</div><div class="url-more">+ 14 more</div></div>
+                    </details>
+                </td>
+            </tr>
+            <tr>
+                <td><span class="badge badge-low">Low</span></td>
+                <td class="issue-type">Thin Content</td>
+                <td class="count">10</td>
+                <td>Indexable pages with fewer than 200 words.</td>
+            </tr>
+            <tr class="url-row">
+                <td colspan="4">
+                    <details>
+                        <summary class="url-toggle">View affected URLs (10)</summary>
+                        <div class="url-list"><div class="url-item">https://nmgtechnologies.com/blog/tag/events/page/2</div><div class="url-item">https://nmgtechnologies.com/blog/tag/marketing</div><div class="url-item">https://nmgtechnologies.com/blog/tag/mobile</div><div class="url-item">https://nmgtechnologies.com/blog/tag/outsourcing</div><div class="url-item">https://nmgtechnologies.com/blog/tag/search-engine-optimization</div><div class="url-more">+ 5 more</div></div>
+                    </details>
+                </td>
+            </tr>
+            <tr>
+                <td><span class="badge badge-low">Low</span></td>
+                <td class="issue-type">Slow Page</td>
+                <td class="count">152</td>
+                <td>Pages with response time over 1 second.</td>
+            </tr>
+            <tr class="url-row">
+                <td colspan="4">
+                    <details>
+                        <summary class="url-toggle">View affected URLs (152)</summary>
+                        <div class="url-list"><div class="url-item">https://nmgtechnologies.com/blog/best-practices-offshore-software-development</div><div class="url-item">https://nmgtechnologies.com/blog/nmg-technologies-made-list-top-mobile-app-development-companies-goodfirms</div><div class="url-item">https://nmgtechnologies.com/blog/tag/events/page/2</div><div class="url-item">https://nmgtechnologies.com/clients/case-studies/</div><div class="url-item">https://nmgtechnologies.com/download-appdevelopmentcost-ebook</div><div class="url-more">+ 147 more</div></div>
+                    </details>
+                </td>
+            </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    
+
+    <div class="card">
+        <h3>Recommendations</h3>
+        <div class="rec-item"><span class="rec-num">1</span><span>Fix the 12 High-severity 'duplicate_title' issue(s) first.</span></div>
+<div class="rec-item"><span class="rec-num">2</span><span>Fix the 6 High-severity 'broken_link' issue(s) first.</span></div>
+<div class="rec-item"><span class="rec-num">3</span><span>Fix the 63 Medium-severity 'title_too_long' issue(s) first.</span></div>
+<div class="rec-item"><span class="rec-num">4</span><span>Fix the 16 Medium-severity 'duplicate_meta_description' issue(s) first.</span></div>
+<div class="rec-item"><span class="rec-num">5</span><span>Fix the 2 Medium-severity 'missing_h1' issue(s) first.</span></div>
+
+    </div>
+
+    <div class="footer">
+        <span>Generated by SEO Command Center</span>
+        <span>Model: qwen3.5:9b &middot; 456 URLs &middot; 13 issues</span>
+    </div>
+</div>
+</body>
+</html>

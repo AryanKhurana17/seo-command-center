@@ -15,15 +15,3 @@ env/
 .DS_Store
 .vscode/
 .idea/
-
-# Claude Code/System Artifacts
-.claude/audit.jsonl
-agent-log.md
-
-# Logs and temporary files
-*.log
-tmp/
-
-outputs/
-!outputs/report.json
-!outputs/report.html
