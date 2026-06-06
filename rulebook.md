@@ -17,9 +17,9 @@ rules — match them precisely.
 | `duplicate_title` done| same `Title 1` on 2+ indexable URLs | High |
 | `title_too_long` done | `Title 1 Pixel Width` > 561 OR `Title 1 Length` > 60 | Medium |
 | `title_too_short` done | `Title 1 Length` < 30 (and not empty) | Low |
-| `missing_meta_description` | `Meta Description 1` empty, indexable 200 page | Medium |
-| `duplicate_meta_description` | same `Meta Description 1` on 2+ indexable URLs | Medium |
-| `meta_description_too_long` | `Meta Description 1 Length` > 155 | Low |
+| `missing_meta_description` done| `Meta Description 1` empty, indexable 200 page | Medium |
+| `duplicate_meta_description`done| same `Meta Description 1` on 2+ indexable URLs | Medium |
+| `meta_description_too_long` done| `Meta Description 1 Length` > 155 | Low |
 | `missing_h1` | `H1-1` empty on a 200 page | Medium |
 | `duplicate_h1` | same `H1-1` on 2+ indexable URLs | Low |
 | `broken_link` done | `Status Code` in 400–499 | High |

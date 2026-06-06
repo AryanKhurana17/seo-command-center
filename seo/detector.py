@@ -96,8 +96,21 @@ def detect(rows: list[dict]) -> list[dict]:
         "Meta descriptions longer than 155 characters, likely truncated in search.")
 
 
+    # --- H1 ---
+    add("missing_h1", "Medium",
+        [r["Address"] for r in html if is_200(r) and not (r.get("H1-1", "") or "").strip()],
+        "Pages with no H1 header.")
+
+    by_h1 = defaultdict(list)
+    for r in idx200:
+        h = (r.get("H1-1", "") or "").strip()
+        if h:
+            by_h1[h].append(r["Address"])
+    dup_h1 = [u for urls in by_h1.values() if len(urls) > 1 for u in urls]
+    add("duplicate_h1", "Low", dup_h1, "Pages sharing an identical H1 header.")
 
     # --- Response codes ---
+
     add("broken_link", "High",
         [r["Address"] for r in rows if 400 <= _int(r.get("Status Code")) <= 499],
         "URLs returning a client error (4xx).")

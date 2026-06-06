@@ -25,4 +25,6 @@ Format:
 - fixed settings.json
 - found error in mcp/server due to which server wasnt runnning, fixed that
 - Added title_too_short detector. Count matches the SF issue CSV. 8/17 detectors done.
+- Added 3 meta_description related detectors. 11/17
+- Added H1 detectors. Key insight: missing_h1 applies to ALL 200 pages, not just indexable. duplicate_h1 uses indexable only. 13/17 done.
 - 

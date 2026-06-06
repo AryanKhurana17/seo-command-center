@@ -39,3 +39,19 @@ If it fails to start, show me the error logs immediately so we can fix the initi
 4. **Prompt:** "Add three meta description detectors: missing, duplicate, too_long with specific rules and code patterns"
    **For:** Completing meta description detection
    **Revised?** No
+5. Add two H1 detectors to seo/detector.py. Add them after the
+meta description section. Add a comment "# --- H1 ---" before
+them.
+
+IMPORTANT: missing_h1 uses ALL html 200 pages (not just
+indexable), but duplicate_h1 uses only indexable pages
+(idx200).
+
+1. missing_h1 (severity "Medium"):
+   H1-1 is empty on a 200 HTML page. Use the html list
+filtered to 200
+
+2. duplicate_h1 (severity "Low"):
+   Same H1-1 on 2+ indexable URLs. Use idx200 and the
+defaultdict pattern. You can check @rulebook.md for their
+detailed description
