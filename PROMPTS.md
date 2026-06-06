@@ -23,5 +23,5 @@ Format per entry:
 ---
 
 ## My prompts
-1. ...
-2. ...
+1. "Fixed the errors in the claude-plugin"
+

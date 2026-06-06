@@ -96,7 +96,7 @@ def detect(rows: list[dict]) -> list[dict]:
     #   thin_content, non_indexable_but_linked, slow_page
     # Each is a short rule over the columns — see rulebook.md.
     # ----------------------------------------------------------------------- #
-
+    
     return issues
 
 
