@@ -9,6 +9,18 @@ let state = {
     summary: { total_issues: 0, by_severity: { High: 0, Medium: 0, Low: 0 } }
 };
 
+// Recompute summary from raw issue counts (total affected URLs, not issue type count)
+function recomputeSummary() {
+    const by_severity = { High: 0, Medium: 0, Low: 0 };
+    let total = 0;
+    for (const iss of state.issues) {
+        const c = iss.count || (iss.affected_urls || []).length;
+        by_severity[iss.severity] = (by_severity[iss.severity] || 0) + c;
+        total += c;
+    }
+    state.summary = { total_issues: total, by_severity };
+}
+
 // Build a human-readable detail string for each issue type
 function getDetail(issue, url) {
     switch (issue.type) {
@@ -35,8 +47,9 @@ function getDetail(issue, url) {
 }
 
 function updateKPIs() {
+    recomputeSummary();
     const s = state.summary;
-    $('total-urls').textContent  = state.urls;
+    $('total-urls').textContent   = state.urls;
     $('total-issues').textContent = s.total_issues || 0;
     $('high-count').textContent   = s.by_severity?.High   || 0;
     $('medium-count').textContent = s.by_severity?.Medium || 0;
