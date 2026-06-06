@@ -121,6 +121,61 @@ def detect(rows: list[dict]) -> list[dict]:
         [r["Address"] for r in rows if 300 <= _int(r.get("Status Code")) <= 399],
         "URLs that redirect (3xx).")
 
+    # Redirect chains and loops
+    redirect_map = {}
+    for r in rows:
+        code = _int(r.get("Status Code"))
+        if 300 <= code <= 399:
+            target = (r.get("Redirect URL", "") or "").strip()
+            if target:
+                redirect_map[r["Address"]] = target
+
+    chain_urls = []
+    for url, target in redirect_map.items():
+        if target in redirect_map:
+            chain_urls.append(url)
+
+    for url in redirect_map:
+        visited = set()
+        current = url
+        while current in redirect_map:
+            if current in visited:
+                if url not in chain_urls:
+                    chain_urls.append(url)
+                break
+            visited.add(current)
+            current = redirect_map[current]
+
+    add("redirect_chain", "High", chain_urls,
+        "Redirect chains or loops detected — a URL redirects to another redirect.")
+
+    # Thin content
+    add("thin_content", "Low",
+        [r["Address"] for r in idx200
+         if 0 < _int(r.get("Word Count")) < 200],
+        "Indexable pages with fewer than 200 words.")
+
+    # Non-indexable but linked
+    add("non_indexable_but_linked", "Medium",
+        [r["Address"] for r in html
+         if (r.get("Indexability", "") or "").strip().lower() == "non-indexable"
+         and _int(r.get("Inlinks")) > 0],
+        "Non-indexable pages that still receive internal links.")
+
+    # Slow pages
+    add("slow_page", "Low",
+        [r["Address"] for r in rows if _float(r.get("Response Time")) > 1.0],
+        "Pages with response time over 1 second.")
+
+    # Missing image alt text
+    image_rows = [r for r in rows if "image" in (r.get("Content Type", "") or "").lower()]
+    add("missing_image_alt", "Medium",
+        [r["Address"] for r in image_rows
+         if not (r.get("Alt Text 1", "") or r.get("Alt Text", "") or "").strip()],
+        "Images with no alt text for accessibility and SEO.")
+
+
+
     # --- Orphan pages ---
     add("orphan_page", "Medium",
         [r["Address"] for r in idx200 if _int(r.get("Inlinks")) == 0],

@@ -61,3 +61,6 @@ seo-command-center/
 - (e.g. "SF leaves Title 1 blank on redirected URLs — must filter Status Code 200 first")
 - .claude/settings.json format was corrected
 - mcp/server and run file had coupling issues.
+- - All 17 detectors implemented. Key filters: idx200 for most, html200 for missing_h1, full rows for broken_link/server_error/slow_page.
+- missing_image_alt may need column name adjustment depending on the export version.
+- thin_content: filter Word Count > 0 to avoid counting blanks.
