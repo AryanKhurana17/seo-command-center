@@ -28,3 +28,4 @@ Format:
 - Added 3 meta_description related detectors. 11/17
 - Added H1 detectors. Key insight: missing_h1 applies to ALL 200 pages, not just indexable. duplicate_h1 uses indexable only. 13/17 done.
 - Added thin_content, non_indexable_but_linked, slow_page, missing_image_alt. All 17 detectors now present. missing_image_alt might return 0 — image alt data may not be in internal_all.csv for this sample. Will work on hidden export if the column exists.
+- Rewrote dashboard: dark theme, KPI cards, live issue table with severity badges. SSE events populate data in real-time. Tested with sample export — looks professional.
