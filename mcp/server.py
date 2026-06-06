@@ -19,7 +19,7 @@ ROOT = os.path.dirname(HERE)
 DASH_DIR = os.path.join(ROOT, "dashboard")
 OUT_DIR = os.path.join(ROOT, "outputs")
 PORT = int(os.environ.get("SEO_PORT", "7700"))
-MODEL = os.environ.get("RADAR_MODEL", "qwen3.5:9b")
+MODEL = os.environ.get("RADAR_MODEL", "gemma4:31b-cloud")
 
 import sys
 sys.path.insert(0, ROOT)

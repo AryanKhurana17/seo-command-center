@@ -758,7 +758,7 @@
     "Fix the 2 Medium-severity 'missing_h1' issue(s) first."
   ],
   "run_meta": {
-    "model": "qwen3.5:9b",
+    "model": "gemma4:31b-cloud",
     "model_calls": 0,
     "duration_sec": 0.0
   }
