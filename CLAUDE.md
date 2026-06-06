@@ -12,6 +12,7 @@ dashboard at localhost:7700, and outputs `outputs/report.json` + `outputs/report
 - `outputs/report.json` MUST match `report.schema.json`. Validate before declaring done.
 - Filter to `text/html` + indexable pages before title/meta checks (see `rulebook.md`).
 - Do not hard-code anything to the sample export — it must work on an unseen export.
+- Do not plan if the instructions are explicitly told to you.
 
 ## Architecture 
 ```text
@@ -58,4 +59,5 @@ seo-command-center/
 
 ## Things I have learned during the build (update this as you go)
 - (e.g. "SF leaves Title 1 blank on redirected URLs — must filter Status Code 200 first")
-- claude-plugin format was wrong
+- .claude/settings.json format was corrected
+- mcp/server and run file had coupling issues.

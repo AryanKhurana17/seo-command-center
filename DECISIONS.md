@@ -22,3 +22,7 @@ Format:
 ---
 
 ## My log
+- fixed settings.json
+- found error in mcp/server due to which server wasnt runnning, fixed that
+- Added title_too_short detector. Count matches the SF issue CSV. 8/17 detectors done.
+- 

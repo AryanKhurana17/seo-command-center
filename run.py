@@ -56,6 +56,9 @@ def main():
           f"Medium {s['by_severity'].get('Medium',0)} / Low {s['by_severity'].get('Low',0)})")
     print("Wrote outputs/report.json and outputs/report.html")
 
+    if not args.no_dashboard:
+        input("\nAudit complete. Press Enter to stop the dashboard and exit...")
+
 
 if __name__ == "__main__":
     main()
