@@ -9,80 +9,63 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #1a1a1f;
-            --card-bg: #242428;
-            --border: #3a3a42;
-            --text: #f8f7f4;
-            --muted: #c8c5be;
+            --bg: #0d0d12;
+            --card-bg: #1a1a22;
+            --border: #2a2a35;
+            --text: #f0efe9;
+            --muted: #8a8a95;
             --accent: #FF0000;
+            --green: #22c55e;
             --yellow: #e2b53e;
+            --blue: #3b82f6;
             --gray: #4a4a52;
-            --radius: 14px;
-            --transition: all 0.2s ease;
+            --radius: 12px;
         }
 
-        * {
-            box-sizing: border-box;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-        }
+        * { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
 
         body {
             margin: 0;
             background-color: var(--bg);
             color: var(--text);
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            font-family: 'Inter', system-ui, sans-serif;
             line-height: 1.5;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
         }
 
         /* Header */
         header {
-            padding: 24px 40px;
+            padding: 18px 32px;
             border-bottom: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: linear-gradient(to bottom, #212126, var(--bg));
+            background: linear-gradient(to bottom, #141419, var(--bg));
         }
 
         .brand {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
         }
 
         .pulse-dot {
-            width: 10px;
-            height: 10px;
-            background-color: var(--accent);
+            width: 10px; height: 10px;
+            background: var(--accent);
             border-radius: 50%;
-            position: relative;
-            box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.7);
+            box-shadow: 0 0 0 0 rgba(255,0,0,0.7);
             animation: pulse 2s infinite;
         }
 
         @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.7); }
-            70% { box-shadow: 0 0 0 10px rgba(255, 0, 0, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(255, 0, 0, 0); }
+            0% { box-shadow: 0 0 0 0 rgba(255,0,0,0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(255,0,0,0); }
+            100% { box-shadow: 0 0 0 0 rgba(255,0,0,0); }
         }
 
-        h1 {
-            font-size: 20px;
-            font-weight: 700;
-            margin: 0;
-            letter-spacing: -0.02em;
-        }
+        h1 { font-size: 18px; font-weight: 700; margin: 0; letter-spacing: -0.01em; }
 
         .header-meta {
-            display: flex;
-            gap: 16px;
-            align-items: center;
-            font-size: 13px;
-            color: var(--muted);
+            display: flex; gap: 12px; font-size: 12px; color: var(--muted);
         }
 
         .meta-item {
@@ -92,193 +75,126 @@
             border: 1px solid var(--border);
         }
 
-        /* Main Layout */
-        main {
-            padding: 40px;
-            max-width: 1400px;
-            margin: 0 auto;
-            width: 100%;
-        }
+        /* Main */
+        main { padding: 28px 32px; max-width: 1600px; margin: 0 auto; width: 100%; }
 
-        /* KPI Section */
+        /* KPI Grid */
         .kpi-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 24px;
-            margin-bottom: 32px;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 16px;
+            margin-bottom: 28px;
         }
 
         .kpi-card {
             background: var(--card-bg);
             border: 1px solid var(--border);
             border-radius: var(--radius);
-            padding: 24px;
-            display: flex;
-            flex-direction: column;
-            transition: var(--transition);
-        }
-
-        .kpi-card:hover {
-            border-color: #4a4a52;
-            transform: translateY(-2px);
-        }
-
-        .kpi-label {
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: var(--muted);
-            margin-bottom: 8px;
-            font-weight: 600;
+            padding: 20px;
+            text-align: center;
         }
 
         .kpi-value {
-            font-size: 32px;
+            font-size: 36px;
             font-weight: 700;
-            color: var(--text);
+            display: block;
         }
 
+        .kpi-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--muted);
+            font-weight: 600;
+            margin-top: 4px;
+        }
+
+        .kpi-card.urls .kpi-value { color: var(--blue); }
         .kpi-card.high .kpi-value { color: var(--accent); }
         .kpi-card.medium .kpi-value { color: var(--yellow); }
-        .kpi-card.low .kpi-value { color: var(--muted); }
+        .kpi-card.low .kpi-value { color: var(--green); }
 
-        /* Status Indicator */
-        .status-bar {
-            margin-bottom: 32px;
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            background: var(--card-bg);
-            padding: 12px 24px;
-            border-radius: var(--radius);
-            border: 1px solid var(--border);
-            width: fit-content;
-        }
-
-        .status-indicator {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: var(--muted);
-        }
-
-        .status-indicator.running {
-            background: var(--yellow);
-            animation: blink 1s infinite;
-        }
-
-        .status-indicator.done {
-            background: #4caf50;
-        }
-
-        @keyframes blink {
-            0% { opacity: 1; }
-            50% { opacity: 0.4; }
-            100% { opacity: 1; }
-        }
-
-        /* Issues Table */
+        /* Table */
         .table-container {
             background: var(--card-bg);
             border: 1px solid var(--border);
             border-radius: var(--radius);
             overflow: hidden;
-            margin-bottom: 32px;
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            text-align: left;
+        .table-scroll {
+            overflow-x: auto;
+            max-height: 70vh;
+            overflow-y: auto;
         }
+
+        table { width: 100%; border-collapse: collapse; text-align: left; }
 
         th {
-            background: rgba(0, 0, 0, 0.2);
+            background: #111118;
             color: var(--muted);
-            font-size: 12px;
+            font-size: 11px;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
-            padding: 16px 24px;
+            letter-spacing: 0.06em;
+            padding: 14px 16px;
             font-weight: 600;
             border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 1;
         }
 
         td {
-            padding: 16px 24px;
-            border-bottom: 1px solid var(--border);
-            font-size: 14px;
+            padding: 10px 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+            font-size: 13px;
             color: var(--text);
+            vertical-align: middle;
         }
 
-        tr:last-child td {
-            border-bottom: none;
+        tr:hover td { background: rgba(255,255,255,0.02); }
+
+        .url-cell {
+            color: var(--muted);
+            font-size: 12px;
+            max-width: 280px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
-        tr:hover td {
-            background: rgba(255, 255, 255, 0.02);
-        }
+        .detail-cell { color: var(--muted); font-size: 12px; }
+
+        .fix-cell { font-size: 12px; }
+        .fix-cell.has-fix { color: var(--green); }
+        .fix-cell.manual { color: var(--yellow); font-style: italic; }
 
         /* Badges */
         .badge {
             display: inline-block;
-            padding: 2px 10px;
+            padding: 3px 10px;
             border-radius: 100px;
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 700;
             text-transform: uppercase;
+            letter-spacing: 0.04em;
         }
 
         .badge-high { background: var(--accent); color: #fff; }
-        .badge-medium { background: var(--yellow); color: #1a1a1f; }
+        .badge-medium { background: var(--yellow); color: #0d0d12; }
         .badge-low { background: var(--gray); color: var(--muted); }
 
-        /* Recommendations */
-        .recommendations {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 24px;
-        }
-
-        .recommendations h2 {
-            font-size: 18px;
-            margin: 0 0 16px 0;
-            font-weight: 600;
-        }
-
-        #recommendations-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .rec-item {
-            padding: 12px 0;
-            border-bottom: 1px solid var(--border);
+        .empty-msg {
+            text-align: center;
             color: var(--muted);
+            padding: 60px 20px;
             font-size: 14px;
-            display: flex;
-            gap: 12px;
-        }
-
-        .rec-item:last-child {
-            border-bottom: none;
-        }
-
-        .rec-item::before {
-            content: "→";
-            color: var(--accent);
-            font-weight: bold;
         }
 
         @media (max-width: 768px) {
-            header { padding: 16px 20px; flex-direction: column; align-items: flex-start; gap: 16px; }
-            main { padding: 20px; }
-            .kpi-grid { grid-template-columns: 1fr 1fr; }
-        }
-
-        @media (max-width: 480px) {
-            .kpi-grid { grid-template-columns: 1fr; }
+            header { padding: 14px 16px; flex-direction: column; gap: 12px; }
+            main { padding: 16px; }
+            .kpi-grid { grid-template-columns: repeat(3, 1fr); }
         }
     </style>
 </head>
@@ -295,54 +211,46 @@
     </header>
 
     <main>
-        <div class="status-bar">
-            <div id="status-dot" class="status-indicator"></div>
-            <span id="status-text" style="font-size: 13px; font-weight: 500; color: var(--muted);">Initializing audit...</span>
-        </div>
-
         <div class="kpi-grid">
+            <div class="kpi-card urls">
+                <span class="kpi-value" id="total-urls">0</span>
+                <span class="kpi-label">Total URLs</span>
+            </div>
             <div class="kpi-card">
-                <div class="kpi-label">Total Issues</div>
-                <div class="kpi-value" id="total-issues">0</div>
+                <span class="kpi-value" id="total-issues">0</span>
+                <span class="kpi-label">Total Issues</span>
             </div>
             <div class="kpi-card high">
-                <div class="kpi-label">High Severity</div>
-                <div class="kpi-value" id="high-count">0</div>
+                <span class="kpi-value" id="high-count">0</span>
+                <span class="kpi-label">High</span>
             </div>
             <div class="kpi-card medium">
-                <div class="kpi-label">Medium Severity</div>
-                <div class="kpi-value" id="medium-count">0</div>
+                <span class="kpi-value" id="medium-count">0</span>
+                <span class="kpi-label">Medium</span>
             </div>
             <div class="kpi-card low">
-                <div class="kpi-label">Low Severity</div>
-                <div class="kpi-value" id="low-count">0</div>
+                <span class="kpi-value" id="low-count">0</span>
+                <span class="kpi-label">Low</span>
             </div>
         </div>
 
         <div class="table-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th style="width: 120px;">Severity</th>
-                        <th>Issue Type</th>
-                        <th style="width: 100px; text-align: center;">Count</th>
-                        <th>Description</th>
-                    </tr>
-                </thead>
-                <tbody id="issues-table-body">
-                    <tr>
-                        <td colspan="4" style="text-align: center; color: var(--muted); padding: 40px;">
-                            Awaiting audit data...
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <div class="recommendations">
-            <h2>Prioritized Fixes</h2>
-            <div id="recommendations-list">
-                <div class="rec-item">Run the audit to generate a prioritized action plan.</div>
+            <div class="table-scroll">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>URL</th>
+                            <th>Issue Type</th>
+                            <th>Severity</th>
+                            <th>Detail</th>
+                        </tr>
+                    </thead>
+                    <tbody id="issues-table-body">
+                        <tr>
+                            <td colspan="4" class="empty-msg">Awaiting audit data...</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </main>

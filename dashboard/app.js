@@ -1,191 +1,133 @@
 /* app.js — SEO Command Center live cockpit. Plain DOM + SSE, no build step. */
 const $ = (id) => document.getElementById(id);
 
-// Severity priority for sorting (lower is higher priority)
-const SEVERITY_MAP = {
-    'High': 0,
-    'Medium': 1,
-    'Low': 2
-};
+const SEVERITY_MAP = { 'High': 0, 'Medium': 1, 'Low': 2 };
 
-// Local state to keep track of issues and allow sorting
 let state = {
+    urls: 0,
     issues: [],
-    summary: {
-        total_issues: 0,
-        by_severity: { High: 0, Medium: 0, Low: 0 }
-    }
+    summary: { total_issues: 0, by_severity: { High: 0, Medium: 0, Low: 0 } }
 };
 
-/**
- * Inject fade-in animation styles into the head
- */
-function injectStyles() {
-    const style = document.createElement('style');
-    style.textContent = `
-        @keyframes fadeInRow {
-            from { opacity: 0; transform: translateY(-5px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .fade-in-row {
-            animation: fadeInRow 0.4s ease-out forwards;
-        }
-    `;
-    document.head.appendChild(style);
+// Build a human-readable detail string for each issue type
+function getDetail(issue, url) {
+    switch (issue.type) {
+        case 'missing_title':          return 'Missing title tag';
+        case 'duplicate_title':        return `Duplicate title`;
+        case 'title_too_long':         return 'Title too long (> 60 chars / 561px)';
+        case 'title_too_short':        return 'Title too short (< 30 chars)';
+        case 'missing_meta_description': return 'Missing meta description';
+        case 'duplicate_meta_description': return 'Duplicate meta description';
+        case 'meta_description_too_long': return 'Meta description too long (> 155 chars)';
+        case 'missing_h1':             return 'No H1 on page';
+        case 'duplicate_h1':           return 'Duplicate H1';
+        case 'broken_link':            return 'Returns 4xx client error';
+        case 'server_error':           return 'Returns 5xx server error';
+        case 'redirect':               return 'Returns 3xx redirect';
+        case 'redirect_chain':         return 'Part of a redirect chain or loop';
+        case 'thin_content':           return 'Fewer than 200 words';
+        case 'orphan_page':            return 'Zero internal inlinks';
+        case 'non_indexable_but_linked': return 'Non-indexable but receives internal links';
+        case 'slow_page':              return 'Response time > 1.0s';
+        case 'missing_image_alt':      return 'Image missing alt text';
+        default:                       return issue.explanation || issue.type;
+    }
 }
 
-/**
- * Updates the KPI counters on the dashboard
- */
-function updateKPIs(summary) {
-    if (!summary) return;
-    $("total-issues").textContent = summary.total_issues || 0;
-    $("high-count").textContent = summary.by_severity?.High || 0;
-    $("medium-count").textContent = summary.by_severity?.Medium || 0;
-    $("low-count").textContent = summary.by_severity?.Low || 0;
+function updateKPIs() {
+    const s = state.summary;
+    $('total-urls').textContent  = state.urls;
+    $('total-issues').textContent = s.total_issues || 0;
+    $('high-count').textContent   = s.by_severity?.High   || 0;
+    $('medium-count').textContent = s.by_severity?.Medium || 0;
+    $('low-count').textContent    = s.by_severity?.Low    || 0;
 }
 
-/**
- * Updates the status bar and indicator dot
- */
-function updateStatus(text, isRunning = false, isDone = false) {
-    $("status-text").textContent = text;
-    const dot = $("status-dot");
-    dot.className = 'status-indicator';
-    if (isRunning) dot.classList.add('running');
-    if (isDone) dot.classList.add('done');
-}
+function renderTable() {
+    const tbody = $('issues-table-body');
 
-/**
- * Renders the issue table based on current state.issues
- * Sorts by severity (High > Medium > Low)
- */
-function renderIssueTable() {
-    const tbody = $("issues-table-body");
-
-    // Sort issues by severity priority
-    const sortedIssues = [...state.issues].sort((a, b) =>
+    // Flatten: one row per affected URL per issue, sorted by severity then issue type
+    const rows = [];
+    const sorted = [...state.issues].sort((a, b) =>
         (SEVERITY_MAP[a.severity] ?? 99) - (SEVERITY_MAP[b.severity] ?? 99)
     );
 
-    if (sortedIssues.length === 0) {
-        tbody.innerHTML = `<tr class="empty"><td colspan="4" style="text-align: center; color: var(--muted); padding: 40px;">Awaiting audit data...</td></tr>`;
+    for (const issue of sorted) {
+        for (const url of (issue.affected_urls || [])) {
+            rows.push({ url, issue });
+        }
+    }
+
+    if (rows.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" class="empty-msg">Awaiting audit data...</td></tr>`;
         return;
     }
 
     tbody.innerHTML = '';
-    sortedIssues.forEach(issue => {
+    for (const { url, issue } of rows) {
+        const sev = issue.severity.toLowerCase();
         const tr = document.createElement('tr');
-        tr.className = 'fade-in-row';
-
-        const sevClass = `badge badge-${issue.severity.toLowerCase()}`;
+        // truncate URL for display
+        const displayUrl = url.replace(/^https?:\/\/[^/]+/, '').replace(/^$/, '/') || url;
+        const detail = getDetail(issue, url);
 
         tr.innerHTML = `
-            <td><span class="${sevClass}">${issue.severity}</span></td>
-            <td>${issue.type}</td>
-            <td style="text-align: center;">${issue.count}</td>
-            <td>${issue.explanation || ''}</td>
+            <td class="url-cell" title="${url}">${displayUrl}</td>
+            <td style="font-size:12px;font-weight:500;color:var(--text)">${issue.type}</td>
+            <td><span class="badge badge-${sev}">${issue.severity}</span></td>
+            <td class="detail-cell">${detail}</td>
         `;
         tbody.appendChild(tr);
-    });
+    }
 }
 
-/**
- * Updates the recommendations list
- */
-function updateRecommendations(recs) {
-    const list = $("recommendations-list");
-    if (!recs || recs.length === 0) return;
-
-    list.innerHTML = '';
-    recs.forEach(text => {
-        const div = document.createElement('div');
-        div.className = 'rec-item';
-        div.textContent = text;
-        list.appendChild(div);
-    });
-}
-
-/**
- * Main event handler for SSE and initial state
- */
 function handleEvent({ event, data }) {
-    console.log(`SSE Event: ${event}`, data);
-
     switch (event) {
         case 'snapshot':
-            if (data.site) $("site-name").textContent = data.site;
-            if (data.urls) $("url-count").textContent = data.urls;
-            if (data.issues) {
-                state.issues = data.issues;
-                renderIssueTable();
-            }
-            if (data.summary) {
-                state.summary = data.summary;
-                updateKPIs(data.summary);
-            }
-            if (data.status) updateStatus(data.status);
+            if (data.site)    $('site-name').textContent = data.site;
+            if (data.urls)  { state.urls = data.urls; $('url-count').textContent = data.urls; }
+            if (data.issues) { state.issues = data.issues; }
+            if (data.summary) { state.summary = data.summary; }
+            updateKPIs();
+            renderTable();
             break;
 
         case 'loaded':
-            if (data.site) $("site-name").textContent = data.site;
-            if (data.urls) $("url-count").textContent = data.urls;
-            updateStatus("Running audit pipeline...", true);
+            if (data.site) $('site-name').textContent = data.site;
+            if (data.urls) { state.urls = data.urls; $('url-count').textContent = data.urls; $('total-urls').textContent = data.urls; }
             break;
 
         case 'issue':
             state.issues.push(data);
-            renderIssueTable();
-            // We don't have the full summary yet, but we can increment local counters
-            // if a summary event hasn't arrived. However, 'summary' event is the source of truth.
+            renderTable();
             break;
 
         case 'summary':
             state.summary = data;
-            updateKPIs(data);
-            break;
-
-        case 'recommendations':
-            updateRecommendations(data.recommendations);
+            updateKPIs();
             break;
 
         case 'saved':
         case 'exported':
-            updateStatus("Done ✓", false, true);
             break;
     }
 }
 
-/**
- * Initializes the dashboard: fetches initial state then connects SSE
- */
 async function init() {
-    injectStyles();
-
     try {
-        const response = await fetch('/state');
-        if (response.ok) {
-            const initial = await response.json();
-            // The /state response is treated like a 'snapshot' event
-            handleEvent({ event: 'snapshot', data: initial });
+        const r = await fetch('/state');
+        if (r.ok) {
+            const d = await r.json();
+            handleEvent({ event: 'snapshot', data: d });
         }
-    } catch (e) {
-        console.error("Failed to fetch initial state:", e);
-    }
+    } catch (e) { console.error('Failed to fetch initial state:', e); }
 
     const es = new EventSource('/events');
     es.onmessage = (m) => {
-        try {
-            const parsed = JSON.parse(m.data);
-            handleEvent(parsed);
-        } catch (e) {
-            console.error("Error parsing SSE message:", e, m.data);
-        }
+        try { handleEvent(JSON.parse(m.data)); }
+        catch (e) { console.error('SSE parse error:', e); }
     };
-
-    es.onerror = (e) => {
-        console.error("SSE connection error:", e);
-    };
+    es.onerror = (e) => console.error('SSE error:', e);
 }
 
 init();
